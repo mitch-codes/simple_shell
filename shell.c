@@ -2,14 +2,26 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
-
+/**
+ * main - Entry point
+ *
+ * Return: 0 on success
+ */
 
 int main(void)
 {
 	size_t bufsize = 100;
 	char *buffer;
-	char *comm[2];
+	char *piece;
+	char **comm = malloc(sizeof(char) * 100);
+
+	while (1)
+	{
+	int i = 0;
+	int j = 0;
 
 	buffer = malloc(sizeof(char) * bufsize);
 	if (buffer == NULL)
@@ -17,20 +29,42 @@ int main(void)
 		printf("unable to allocate memory");
 		return (0);
 	}
-	printf("$ ");
+	printf("#cisfun$ ");
 	getline(&buffer, &bufsize, stdin);
 
-	printf("the command is %s\n", buffer);
-	printf("the length of command is %ld\n", strlen(buffer));
-	comm[0] = buffer;
-	strcat(comm[0], "0");
-	comm[1] = NULL;
-	printf("%s\n", comm[0]);
+	buffer[strlen(buffer) - 1] = ' ';
 
-	if(execve(comm[0], comm, NULL) == -1)
+	piece = strtok(buffer, " ");
+	while (piece != NULL)
 	{
-		perror("Error");
+		comm[i] = piece;
+		piece = strtok(NULL, " ");
+		i++;
 	}
+	char first[] = comm[0];
+	if (first == "exit" || comm[0] == NULL)
+	{
+		return (0);
+	}
+	comm[i] = NULL;
 
+	if (fork() != 0)
+	{
+		wait(NULL);
+	}
+	else
+	{
+		if (execve(comm[0], comm, NULL) == -1)
+		{
+			perror("Error");
+		}
+	
+	for (j = 0; j < i; j++)
+	{
+		comm[j] = NULL;
+	}
+	}
+	}
+		
 	return (0);
 }
