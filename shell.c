@@ -6,6 +6,22 @@
 #include <sys/wait.h>
 
 /**
+ * exitProgram - Exit program if a statement is given
+ *
+ * @command: the statement being checked
+ * Return: 0 on success
+ */
+int exitProgram(char *command)
+{
+	if (strcmp(command, "exit") == 0)
+	{
+		printf("we exit\n");
+		return (1);
+	}
+	return (0);
+}
+
+/**
  * main - Entry point
  *
  * Return: 0 on success
@@ -37,6 +53,8 @@ int main(void)
 		piece = strtok(NULL, " ");
 		i++;
 	}
+	if (exitProgram(comm[0]) == 1)
+		return (0);
 	comm[i] = NULL;
 	if (fork() != 0)
 	{
