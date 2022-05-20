@@ -14,28 +14,22 @@
 int main(void)
 {
 	size_t bufsize = 100;
-	char *buffer;
+	char *buffer = malloc(sizeof(char) * bufsize);
 	char *piece;
-	int i = 0;
-	int j = 0;
 	char **comm = malloc(sizeof(char) * 100);
-	char *uname = malloc(sizeof(char) * 10);
 
-	while (j < 10)
+	while (1)
 	{
-	buffer = malloc(sizeof(char) * bufsize);
+		int i = 0;
+
 	if (buffer == NULL)
 	{
 		printf("unable to allocate memory");
 		return (0);
 	}
-	getlogin_r(uname, 10);
-	printf("%s## ", uname);
+	printf("$ ");
 	getline(&buffer, &bufsize, stdin);
-
 	buffer[strlen(buffer) - 1] = ' ';
-
-
 	piece = strtok(buffer, " ");
 	while (piece != NULL)
 	{
@@ -44,10 +38,16 @@ int main(void)
 		i++;
 	}
 	comm[i] = NULL;
-
-	if (execve(comm[0], comm, NULL) == -1)
+	if (fork() != 0)
 	{
-		perror("Error");
+		wait(NULL);
+	}
+	else
+	{
+		if (execve(comm[0], comm, NULL) == -1)
+		{
+			perror("Error");
+		}
 	}
 	}
 	return (0);
